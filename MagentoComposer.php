@@ -16,10 +16,12 @@ class MagentoComposer
 {
     const PACKAGE_TYPE_MAGENTO = 'magento-module';
 
+    // @codingStandardsIgnoreStart
     const MESSAGE_WRONG_MAGENTO_ROOT = 'Mage class not found in path %s. Please specify the correct "magento-root-dir" value in extra section!';
     const MESSAGE_EMPTY_MAGENTO_ROOT = 'The key "magento-root-dir" is missing from extra configuration section.';
-    const MESSAGE_EMPTY_EXPECTED_VERSION = 'The key "magento-version" is missing from extra configuration section.';
+    const MESSAGE_EMPTY_EXPECTED_VERSION = "The module doesn't support magento %s edition or the '%s' is missing from the module's configuration.";
     const MESSAGE_VERSON_MISMATCH = "Magento %s could not be found! Current Magento version is %s.";
+    // @codingStandardsIgnoreEnd
 
     public static function checkVersion(PackageEvent $event)
     {
@@ -31,6 +33,7 @@ class MagentoComposer
             return;
         }
 
+        $self->loadMage($rootExtra);
         $expectedVersionConstraint = $self->getExpectedMagentoVersion($packageExtra);
         $currentVersionConstraint = $self->getCurrentMagentoVersion($rootExtra);
 
@@ -59,17 +62,7 @@ class MagentoComposer
         return new SolverProblemsException($problems, []);
     }
 
-    private function getExpectedMagentoVersion(array $extra)
-    {
-        if (empty($extra['magento-version'])) {
-            throw $this->createException(self::MESSAGE_EMPTY_EXPECTED_VERSION);
-        }
-
-        $versionParser = new VersionParser();
-        return $versionParser->parseConstraints($extra['magento-version']);
-    }
-
-    private function getCurrentMagentoVersion(array $extra)
+    private function loadMage(array $extra)
     {
         if (empty($extra['magento-root-dir'])) {
             throw $this->createException(self::MESSAGE_EMPTY_MAGENTO_ROOT);
@@ -80,7 +73,42 @@ class MagentoComposer
         if (!class_exists('\Mage', false)) {
             throw $this->createException(sprintf(self::MESSAGE_WRONG_MAGENTO_ROOT, $mageFile));
         }
+    }
 
+    private function getExpectedMagentoVersion(array $extra)
+    {
+        $edition = \Mage::getEdition();
+        $versionConfigKey = $this->getVersionConfigKey($edition);
+
+        if (empty($versionConfigKey) || empty($extra[$versionConfigKey])) {
+            throw $this->createException(sprintf(self::MESSAGE_EMPTY_EXPECTED_VERSION, $edition, $versionConfigKey));
+        }
+
+        $versionParser = new VersionParser();
+        return $versionParser->parseConstraints($extra[$versionConfigKey]);
+    }
+
+    private function getVersionConfigKey($edition)
+    {
+        switch ($edition) {
+            case \Mage::EDITION_COMMUNITY:
+                $versionConfigKey = 'magento-version-ce';
+                break;
+
+            case \Mage::EDITION_ENTERPRISE:
+                $versionConfigKey = 'magento-version-ee';
+                break;
+
+            default:
+                $versionConfigKey = '';
+                break;
+        }
+
+        return $versionConfigKey;
+    }
+
+    private function getCurrentMagentoVersion()
+    {
         $versionParser = new VersionParser();
         return $versionParser->parseConstraints(\Mage::getVersion());
     }
