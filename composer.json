@@ -1,0 +1,17 @@
+{
+    "name": "inviqa/magento-version-checker",
+    "type": "composer-plugin",
+    "license": "proprietary",
+    "description": "Ensures that a Magento module has the expected Magento version installed.",
+    "require": {
+        "composer-plugin-api": "1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Inviqa\\": ""
+        }
+    },
+    "extra":{
+        "class":"Inviqa\\Plugin"
+    }
+}
