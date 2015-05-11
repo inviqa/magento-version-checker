@@ -56,10 +56,8 @@ class MagentoComposer
     private function createException($message)
     {
         $problem = new ConfigurationProblem(new Pool, $message);
-        $problems = [
-            $problem
-        ];
-        return new SolverProblemsException($problems, []);
+
+        return new SolverProblemsException(array($problem), array());
     }
 
     private function loadMage(array $extra)
