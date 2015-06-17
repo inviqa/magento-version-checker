@@ -4,7 +4,7 @@
     "license": "proprietary",
     "description": "Ensures that a Magento module has the expected Magento version installed.",
     "require": {
-        "composer-plugin-api": "1.0.0"
+        "composer-plugin-api": "^1.0"
     },
     "require-dev": {
         "composer/composer": "^1.0@dev"
