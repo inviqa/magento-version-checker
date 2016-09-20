@@ -3,18 +3,9 @@
 Ensures that a Magento module has the expected Magento version installed.
 
 ## How to use on a project
-Add the followings to the composer.json of your Magento project.
+Run the following to add it to the composer.json of your Magento project.
 ```
-"repositories": {
-    "magento-version-checker": {
-        "type": "vcs",
-        "url": "git@github.com:inviqa/magento-version-checker.git"
-    }
-}
-
-"require": {
-    "inviqa/magento-version-checker": "*"
-}
+composer require inviqa/magento-version-checker
 ```
 
 It checks all the packages with the following type: "magento-module".
@@ -22,17 +13,9 @@ When it matches it compares the current version (1.1x) and edition (Enterprise o
 with the required Magento version of the module.
 
 ## How to use with standalone Magento module
-Add the followings to the composer.json of your Magento module.
+Run the following to add it to the composer.json of your Magento module.
 ```
-"repositories": {
-    "magento-version-checker": {
-        "type": "vcs",
-        "url": "git@github.com:inviqa/magento-version-checker.git"
-    }
-},
-"require": {
-    "inviqa/magento-version-checker": "*"
-},
+composer require 'inviqa/magento-version-checker=1.*'
 ```
 
 You need to specify the required magento versions in the extra section. You can specify the required
@@ -62,3 +45,9 @@ Workaround: run `composer install` again.
 * Create a Pull Request from your branch, include as much documentation as you can in the commit message/pull request,
 following these guidelines on writing a good commit message
 * That's it!
+
+## License ##
+```text
+Copyright:: 2015-2016 The Inviqa Group Ltd
+
+See LICENSE file
